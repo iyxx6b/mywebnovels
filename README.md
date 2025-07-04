@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # project_x
 
 > My bee&#39;s knees Nuxt.js project
@@ -20,3 +21,6 @@ $ npm run generate
 ```
 
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+=======
+# mywebapp
+>>>>>>> 642f507dea03f07875a6ed01cb969ce995583c7c
