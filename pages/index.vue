@@ -31,19 +31,10 @@
             </h2>
             <v-row>
               <v-col
-                v-for="i in 4" :key="i"
-                cols="12"
-                sm="6"
-                md="4"
-                lg="3"
-                class="d-flex"
+                v-for="novel in popularNovels" :key="novel.id" 
+                cols="12" sm="6" md="4" lg="3" class="d-flex"
               >
-                <v-card :color="$vuetify.theme.dark ? 'secondary' : 'grey lighten-4'" class="pa-4 flex-grow-1 text-center">
-                    <v-img src="https://via.placeholder.com/150x200?text=Novel+Cover" height="200px" contain class="mb-2"></v-img>
-                    <h3 class="text-h6 font-weight-bold" :class="{'white--text': $vuetify.theme.dark, 'primary--text': !$vuetify.theme.dark}">ชื่อนิยาย {{ i }}</h3>
-                    <p class="text-caption grey--text">ผู้แต่ง: ทดสอบ</p>
-                    <v-btn small text color="accent">อ่านเลย</v-btn>
-                </v-card>
+                <NovelCard :novel="novel" />
               </v-col>
             </v-row>
           </section>
@@ -56,19 +47,10 @@
             </h2>
             <v-row>
               <v-col
-                v-for="i in 4" :key="i"
-                cols="12"
-                sm="6"
-                md="4"
-                lg="3"
-                class="d-flex"
+                v-for="novel in trendingNovels" :key="novel.id" 
+                cols="12" sm="6" md="4" lg="3" class="d-flex"
               >
-                 <v-card :color="$vuetify.theme.dark ? 'secondary' : 'grey lighten-4'" class="pa-4 flex-grow-1 text-center">
-                    <v-img src="https://via.placeholder.com/150x200?text=Novel+Cover" height="200px" contain class="mb-2"></v-img>
-                    <h3 class="text-h6 font-weight-bold" :class="{'white--text': $vuetify.theme.dark, 'primary--text': !$vuetify.theme.dark}">ชื่อนิยายยอดนิยม {{ i }}</h3>
-                    <p class="text-caption grey--text">ผู้แต่ง: ทดสอบ</p>
-                    <v-btn small text color="accent">อ่านเลย</v-btn>
-                </v-card>
+                <NovelCard :novel="novel" />
               </v-col>
             </v-row>
           </section>
@@ -79,7 +61,28 @@
 </template>
 
 <script>
+import NovelCard from '~/components/novels/NovelCard.vue'
+
 export default {
+  components: {
+    NovelCard // ลงทะเบียน component
+  },
+  data() {
+    return {
+      popularNovels: [ // ข้อมูลจำลอง (ควรดึงจาก API จริง)
+        { id: 1, title: 'บันทึกตำนานมังกร', author: 'ผู้แต่ง A', coverUrl: 'https://via.placeholder.com/150x200?text=Dragon' },
+        { id: 2, title: 'ผจญภัยในโลกเวทมนตร์', author: 'ผู้แต่ง B', coverUrl: 'https://via.placeholder.com/150x200?text=Magic' },
+        { id: 3, title: 'เกิดใหม่เป็นจอมมาร', author: 'ผู้แต่ง C', coverUrl: 'https://via.placeholder.com/150x200?text=Demon' },
+        { id: 4, title: 'เส้นทางสู่เซียน', author: 'ผู้แต่ง D', coverUrl: 'https://via.placeholder.com/150x200?text=Immortal' },
+      ],
+      trendingNovels: [ // ข้อมูลจำลอง
+        { id: 5, title: 'รักนี้ต้องรอด', author: 'ผู้แต่ง E', coverUrl: 'https://via.placeholder.com/150x200?text=Love' },
+        { id: 6, title: 'สงครามจักรวาล', author: 'ผู้แต่ง F', coverUrl: 'https://via.placeholder.com/150x200?text=Space' },
+        { id: 7, title: 'ปริศนาคฤหาสน์เก่า', author: 'ผู้แต่ง G', coverUrl: 'https://via.placeholder.com/150x200?text=Mystery' },
+        { id: 8, title: 'ฮีโร่ไร้นาม', author: 'ผู้แต่ง H', coverUrl: 'https://via.placeholder.com/150x200?text=Hero' },
+      ]
+    }
+  },
   head() {
     return {
       title: 'หน้าแรก - NovelVerse',
@@ -92,6 +95,7 @@ export default {
 </script>
 
 <style scoped>
+/* ยังคงสไตล์สำหรับ v-sheet และ container ของหน้าแรก */
 .content-sheet {
   /* No specific styles here needed if default Vuetify classes are sufficient */
 }
