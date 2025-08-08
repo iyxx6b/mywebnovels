@@ -12,7 +12,7 @@
     <v-list-item class="px-2 py-4">
       <v-list-item-avatar>
         <v-img src="/logo.png"></v-img> </v-list-item-avatar>
-      <v-list-item-title class="app-title white--text">NovelVerse</v-list-item-title>
+      <v-list-item-title class="app-title white--text">James Novels</v-list-item-title>
       <v-btn
         icon
         @click.stop="miniVariant = !miniVariant"

@@ -40,11 +40,11 @@
       ></v-text-field>
     </v-responsive>
 
-    <v-btn text to="/login" class="mx-1 nav-button">
+    <v-btn text to="/register" class="mx-1 nav-button">
       <span class="d-none d-sm-inline">เข้าสู่ระบบ</span>
       <v-icon right>mdi-login</v-icon>
     </v-btn>
-    <v-btn outlined to="/register" class="mx-1 register-button">
+    <v-btn outlined to="/login" class="mx-1 register-button">
       <span class="d-none d-sm-inline">สมัครสมาชิก</span>
       <v-icon right>mdi-account-plus</v-icon>
     </v-btn>
