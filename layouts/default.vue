@@ -1,8 +1,10 @@
 <template>
   <v-app :dark="$vuetify.theme.dark">
-    <AppHeader /> 
+    <AppHeader />
+    
     <AppNavDrawerLeft :drawer.sync="drawer" :mini-variant.sync="miniVariant" :items="navItems" />
-    <AppNavDrawerRight :drawer.sync="rightDrawer" />
+    
+    <AppNavDrawerRight :rightDrawer.sync="rightDrawer" />
 
     <v-main>
       <v-container fluid class="main-content-container py-0">
@@ -15,6 +17,7 @@
 </template>
 
 <script>
+// Import your layout components
 import AppHeader from '~/components/layout/AppHeader.vue'
 import AppNavDrawerLeft from '~/components/layout/AppNavDrawerLeft.vue'
 import AppNavDrawerRight from '~/components/layout/AppNavDrawerRight.vue'
@@ -29,12 +32,12 @@ export default {
   },
   data () {
     return {
-      drawer: false, // ควบคุม left drawer
+      drawer: false, // Controls the left drawer
       miniVariant: false,
-      rightDrawer: false, // ควบคุม right drawer
-      fixed: false, // สำหรับ footer
-      clipped: false, // สำหรับ app bar
-      navItems: [ // เมนู navigation สำหรับ left drawer
+      rightDrawer: false, // Controls the right drawer
+      fixed: false, // For the footer
+      clipped: false, // For the app bar
+      navItems: [ // Navigation menu for the left drawer
         { icon: 'mdi-home', title: 'หน้าแรก', to: '/', color: 'accent' },
         { icon: 'mdi-book-open-variant', title: 'นิยายทั้งหมด', to: '/novels', color: 'accent' },
         { icon: 'mdi-format-list-bulleted-type', title: 'หมวดหมู่', to: '/categories', color: 'accent' },
@@ -46,7 +49,7 @@ export default {
     }
   },
   mounted() {
-    // โหลด Theme ที่บันทึกไว้เมื่อ Component ถูก Mount (ยังคงอยู่ที่ Layout หลัก)
+    // Load saved theme on component mount
     if (process.client && this.$vuetify && this.$vuetify.theme) {
       const savedTheme = localStorage.getItem('darkTheme');
       if (savedTheme !== null) {
@@ -56,7 +59,7 @@ export default {
       console.warn('Vuetify theme object not available on mounted. Check Vuetify setup.');
     }
 
-    // ฟัง Event จาก AppHeader
+    // Listen for events from AppHeader to toggle drawers
     this.$nuxt.$on('toggle-left-drawer', () => {
       this.drawer = !this.drawer;
     });
@@ -65,7 +68,7 @@ export default {
     });
   },
   beforeDestroy() {
-    // อย่าลืมลบ listener เมื่อ component ถูกทำลาย
+    // Remove event listeners before component is destroyed
     this.$nuxt.$off('toggle-left-drawer');
     this.$nuxt.$off('toggle-right-drawer');
   }

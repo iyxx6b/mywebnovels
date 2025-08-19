@@ -8,11 +8,10 @@
 
 <script>
 export default {
-  name: 'AppFooter', // ตั้งชื่อ component
-  // คุณสามารถเพิ่ม props, data, methods, computed properties ได้ตามต้องการ
+  name: 'AppFooter',
 }
 </script>
 
 <style scoped>
-/* คุณสามารถเพิ่ม CSS ที่มีขอบเขตเฉพาะ component นี้ได้ */
+/* Scoped styles specific to this component */
 </style>

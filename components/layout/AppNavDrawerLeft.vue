@@ -11,7 +11,8 @@
   >
     <v-list-item class="px-2 py-4">
       <v-list-item-avatar>
-        <v-img src="/logo.png"></v-img> </v-list-item-avatar>
+        <v-img src="/logo.png"></v-img>
+      </v-list-item-avatar>
       <v-list-item-title class="app-title white--text">James Novels</v-list-item-title>
       <v-btn
         icon
@@ -43,7 +44,6 @@
 
 <script>
 export default {
-  // ต้องกำหนด props ให้รับค่า drawer, miniVariant, items มาจาก default.vue
   props: {
     drawer: {
       type: Boolean,
@@ -56,20 +56,19 @@ export default {
     items: {
       type: Array,
       default: () => []
+    },
+    clipped: { // Add the clipped prop
+      type: Boolean,
+      default: false
     }
   }
-  // ส่วนของ data และ methods ที่เกี่ยวข้องกับ drawer/miniVariant
-  // ควรถูกส่งผ่าน props หรือใช้ Vuex/Pinia เพื่อจัดการ state
-  // หากต้องการให้ AppNavDrawerLeft เปลี่ยนค่า drawer/miniVariant ให้ default.vue
-  // ต้องใช้ event (เช่น this.$emit('update:drawer', !this.drawer))
-  // หรือใช้ .sync modifier ใน parent (default.vue)
 }
 </script>
 
 <style scoped>
-/* สไตล์ที่เกี่ยวข้องกับ nav-drawer และ list-item-text */
+/* Scoped styles for the left navigation drawer */
 .nav-drawer {
-  /* สไตล์เดิมจาก default.vue */
+  /* add styles here */
 }
 .list-item-text {
   font-family: 'Merriweather', serif;

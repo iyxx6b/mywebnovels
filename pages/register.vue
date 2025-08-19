@@ -1,68 +1,63 @@
 <template>
-  <v-app>
-    <v-main>
-      <div class="dark-bg full-height d-flex align-center justify-center">
-        <v-flex xs12 sm8 md4>
-          <div class="text-center mb-5">
-            <img
-              src="/v.png"
-              alt="Vuetify.js"
-              style="width: 80px; height: 80px;"
-            >
-          </div>
-          <v-card class="mx-auto pa-5" max-width="400" color="#23272f" elevation="2">
-            <v-card-title class="justify-center">
-              <span class="headline">เข้าสู่ระบบ</span>
-            </v-card-title>
-            <v-card-text>
-              <v-form ref="form" v-model="valid" lazy-validation>
-                <v-text-field
-                  v-model="form.email"
-                  label="อีเมล"
-                  :rules="emailRules"
-                  outlined
-                  dense
-                  color="teal"
-                  class="mb-3"
-                />
-                <v-text-field
-                  v-model="form.password"
-                  label="รหัสผ่าน"
-                  :type="showPassword ? 'text' : 'password'"
-                  :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                  @click:append="showPassword = !showPassword"
-                  :rules="passwordRules"
-                  outlined
-                  dense
-                  color="teal"
-                  class="mb-3"
-                />
-                <v-btn
-                  color="teal"
-                  block
-                  large
-                  @click="submit"
-                  :disabled="!valid"
-                >
-                  เข้าสู่ระบบ
-                </v-btn>
-                <v-alert
-                  v-if="success"
-                  type="success"
-                  class="mt-4"
-                  border="left"
-                  color="teal lighten-4"
-                  text
-                >
-                  เข้าสู่ระบบสำเร็จ
-                </v-alert>
-              </v-form>
-            </v-card-text>
-          </v-card>
-        </v-flex>
-      </div>
-    </v-main>
-  </v-app>
+  <div class="d-flex flex-column justify-center align-center">
+    <v-card class="d-flex flex-column justify-center align-center ma-4" outlined>
+      <v-form ref="form" v-model="valid">
+        <v-text-field
+          v-model="email"
+          :rules="emailRules"
+          label="E-mail"
+          outlined
+          dense
+          color="teal"
+          class="mb-3"
+        ></v-text-field>
+
+        <v-text-field
+          v-model="password"
+          :type="showPassword ? 'text' : 'password'"
+          label="Password"
+          outlined
+          dense
+          color="teal"
+          :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+          @click:append="showPassword = !showPassword"
+          class="mb-3"
+        ></v-text-field>
+      </v-form>
+
+      <v-btn
+        color="teal"
+        dark
+        large
+        @click="submit"
+        :disabled="!valid"
+      >
+        Submit
+      </v-btn>
+
+      <v-alert
+        v-if="alert.success"
+        type="success"
+        dense
+        border="left"
+        color="teal lighten-4"
+        class="mt-4"
+      >
+        {{ alert.success.text }}
+      </v-alert>
+
+      <v-alert
+        v-if="alert.error"
+        type="error"
+        dense
+        border="left"
+        color="red lighten-4"
+        class="mt-4"
+      >
+        {{ alert.error.text }}
+      </v-alert>
+    </v-card>
+  </div>
 </template>
 
 <script>
@@ -70,73 +65,40 @@ export default {
   data() {
     return {
       valid: false,
+      email: '',
+      password: '',
       showPassword: false,
-      success: false,
-      form: {
-        email: '',
-        password: '',
-      },
       emailRules: [
-        v => !!v || 'กรุณากรอกอีเมล',
-        v => /.+@.+\..+/.test(v) || 'รูปแบบอีเมลไม่ถูกต้อง',
+        v => !!v || 'E-mail is required',
+        v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
       ],
-      passwordRules: [
-        v => !!v || 'กรุณากรอกรหัสผ่าน',
-      ],
-    }
+      alert: {
+        success: null,
+        error: null,
+      }
+    };
   },
   methods: {
     submit() {
+      // Logic for form submission
       if (this.$refs.form.validate()) {
-        // ในความเป็นจริงโค้ดตรงนี้จะทำการส่งข้อมูลไปยัง API เพื่อตรวจสอบการเข้าสู่ระบบ
-        console.log('ข้อมูลที่ส่ง:', this.form);
+        // Here you would typically call an API to register the user
+        console.log('Form submitted:', { email: this.email, password: this.password });
 
-        // จำลองการเข้าสู่ระบบสำเร็จ
-        this.success = true;
-        setTimeout(() => {
-          this.success = false;
-        }, 3000);
+        // Simulate a successful registration
+        this.alert.success = { text: 'Registration successful!' };
+        this.alert.error = null;
+        this.$refs.form.reset();
+      } else {
+        // Handle validation failure
+        this.alert.error = { text: 'Please correct the form errors.' };
+        this.alert.success = null;
       }
-    },
-  },
-}
+    }
+  }
+};
 </script>
 
 <style scoped>
-/* คุณสามารถใช้ CSS เดียวกันกับหน้าลงทะเบียนได้เลย */
-.dark-bg {
-  min-height: 100vh;
-  width: 100vw;
-  background: linear-gradient(135deg, #181a20 0%, #23272f 100%);
-}
-.full-height {
-  min-height: 100vh;
-}
-.v-card {
-  background: #23272f !important;
-  color: #fff !important;
-}
-.v-card-title,
-.v-card-text,
-.v-label,
-.v-input__slot,
-.v-select__selections,
-.v-chip,
-.v-alert {
-  color: #fff !important;
-}
-.v-text-field input,
-.v-select input,
-.v-select__selection,
-.v-radio label {
-  color: #fff !important;
-}
-.v-btn {
-  color: #fff !important;
-  background: #009688 !important;
-}
-.v-alert {
-  background: #263238 !important;
-  border-left: 5px solid #009688 !important;
-}
+/* Scoped styles specific to this component */
 </style>

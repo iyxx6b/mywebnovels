@@ -8,13 +8,13 @@
     elevate-on-scroll
     class="app-header"
   >
-    <v-app-bar-nav-icon @click.stop="toggleLeftDrawer" /> 
-    
+    <v-app-bar-nav-icon @click.stop="toggleLeftDrawer" />
+
     <v-toolbar-title class="app-title text-uppercase font-weight-bold ml-2">
       <span :class="{'white--text': $vuetify.theme.dark, 'black--text': !$vuetify.theme.dark}">Novel</span>
       <span class="accent--text">Verse</span>
     </v-toolbar-title>
-    
+
     <v-spacer />
 
     <v-toolbar-items class="d-none d-md-flex">
@@ -54,7 +54,7 @@
         {{ $vuetify.theme.dark ? 'mdi-white-balance-sunny' : 'mdi-moon-waning-gibbous' }}
       </v-icon>
     </v-btn>
-    
+
     <v-btn icon @click.stop="toggleRightDrawer" class="ml-2">
       <v-icon>mdi-account-circle</v-icon>
     </v-btn>
@@ -63,7 +63,6 @@
 
 <script>
 export default {
-  // หากคุณใช้ Vuex/Pinia, คุณสามารถ map getters/actions เพื่อจัดการ drawer/theme ได้
   methods: {
     toggleTheme () {
       if (this.$vuetify && this.$vuetify.theme) {
@@ -74,20 +73,17 @@ export default {
       }
     },
     toggleLeftDrawer() {
-      // ส่ง event หรือใช้ Vuex/Pinia เพื่อเปลี่ยนค่า drawer ใน default.vue
-      this.$nuxt.$emit('toggle-left-drawer'); 
+      this.$nuxt.$emit('toggle-left-drawer');
     },
     toggleRightDrawer() {
-      // ส่ง event หรือใช้ Vuex/Pinia เพื่อเปลี่ยนค่า rightDrawer ใน default.vue
       this.$nuxt.$emit('toggle-right-drawer');
     }
   }
-  // mounted สำหรับโหลด theme ยังอยู่ที่นี่ หรือจะย้ายไป default.vue ก็ได้ (ควรเป็น default.vue เพราะเป็น global)
 }
 </script>
 
 <style scoped>
-/* สไตล์สำหรับ App Bar และปุ่มต่างๆ */
+/* Styles for the App Bar and buttons */
 .app-header {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }

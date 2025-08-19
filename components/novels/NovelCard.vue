@@ -1,4 +1,4 @@
-    <template>
+<template>
   <v-card class="mx-auto" max-width="344">
     <v-img
       :src="novel.imageUrl || 'https://via.placeholder.com/150'"
@@ -47,10 +47,8 @@
 
 <script>
 export default {
-  name: 'NovelCard', // ตั้งชื่อ component
+  name: 'NovelCard',
   props: {
-    // กำหนด props ที่ component นี้จะรับเข้ามา
-    // props เป็นวิธีส่งข้อมูลจาก parent component ไปยัง child component
     novel: {
       type: Object,
       default: () => ({
@@ -59,22 +57,20 @@ export default {
         genre: 'แฟนตาซี',
         rating: 4.5,
         views: 12345,
-                description: 'นี่คือคำอธิบายสั้นๆ ของนิยายเรื่องนี้...',
-                imageUrl: ''
-              })
-            }
-          },
-          data() {
-            return {
-              show: false
-            }
-          },
-          methods: {
-            readNovel() {
-              // Add your logic for reading the novel here
-              // For example, navigate to the novel's detail page
-              this.$emit('read-novel', this.novel)
-            }
-          }
-        }
-        </script>
+        description: 'นี่คือคำอธิบายสั้นๆ ของนิยายเรื่องนี้...',
+        imageUrl: ''
+      })
+    }
+  },
+  data() {
+    return {
+      show: false
+    }
+  },
+  methods: {
+    readNovel() {
+      this.$emit('read-novel', this.novel)
+    }
+  }
+}
+</script>

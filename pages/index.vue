@@ -31,7 +31,7 @@
             </h2>
             <v-row>
               <v-col
-                v-for="novel in popularNovels" :key="novel.id" 
+                v-for="novel in popularNovels" :key="novel.id"
                 cols="12" sm="6" md="4" lg="3" class="d-flex"
               >
                 <NovelCard :novel="novel" />
@@ -47,7 +47,7 @@
             </h2>
             <v-row>
               <v-col
-                v-for="novel in trendingNovels" :key="novel.id" 
+                v-for="novel in trendingNovels" :key="novel.id"
                 cols="12" sm="6" md="4" lg="3" class="d-flex"
               >
                 <NovelCard :novel="novel" />
@@ -61,28 +61,32 @@
 </template>
 
 <script>
+// นำเข้า Component ที่จำเป็น
 import NovelCard from '~/components/novels/NovelCard.vue'
 
 export default {
+  // ตั้งชื่อ Component
+  name: 'IndexPage',
   components: {
     NovelCard // ลงทะเบียน component
   },
   data() {
     return {
-      popularNovels: [ // ข้อมูลจำลอง (ควรดึงจาก API จริง)
-        { id: 1, title: 'บันทึกตำนานมังกร', author: 'ผู้แต่ง A', coverUrl: 'https://via.placeholder.com/150x200?text=Dragon' },
-        { id: 2, title: 'ผจญภัยในโลกเวทมนตร์', author: 'ผู้แต่ง B', coverUrl: 'https://via.placeholder.com/150x200?text=Magic' },
-        { id: 3, title: 'เกิดใหม่เป็นจอมมาร', author: 'ผู้แต่ง C', coverUrl: 'https://via.placeholder.com/150x200?text=Demon' },
-        { id: 4, title: 'เส้นทางสู่เซียน', author: 'ผู้แต่ง D', coverUrl: 'https://via.placeholder.com/150x200?text=Immortal' },
+      popularNovels: [ // ข้อมูลจำลองสำหรับนิยายยอดเข้าชม (ในความเป็นจริงควรดึงจาก API)
+        { id: 1, title: 'บันทึกตำนานมังกร', author: 'ผู้แต่ง A', imageUrl: 'https://via.placeholder.com/150x200?text=Dragon', genre: 'แฟนตาซี', rating: 4.8, views: 500000, description: 'เรื่องราวการผจญภัยของนักปราชญ์ผู้ถูกขับไล่...' },
+        { id: 2, title: 'ผจญภัยในโลกเวทมนตร์', author: 'ผู้แต่ง B', imageUrl: 'https://via.placeholder.com/150x200?text=Magic', genre: 'เวทมนตร์', rating: 4.6, views: 450000, description: 'เด็กหนุ่มผู้ไม่มีเวทมนตร์กลับต้องปกป้องโลกใบนี้...' },
+        { id: 3, title: 'เกิดใหม่เป็นจอมมาร', author: 'ผู้แต่ง C', imageUrl: 'https://via.placeholder.com/150x200?text=Demon', genre: 'ต่างโลก', rating: 4.9, views: 600000, description: 'เมื่อวิศวกรหนุ่มสุดเนิร์ดต้องเกิดใหม่เป็นจอมมารสุดโหด...' },
+        { id: 4, title: 'เส้นทางสู่เซียน', author: 'ผู้แต่ง D', imageUrl: 'https://via.placeholder.com/150x200?text=Immortal', genre: 'กำลังภายใน', rating: 4.7, views: 480000, description: 'ฝึกฝนพลังภายใน เพื่อก้าวข้ามขีดจำกัดของมนุษย์...' },
       ],
-      trendingNovels: [ // ข้อมูลจำลอง
-        { id: 5, title: 'รักนี้ต้องรอด', author: 'ผู้แต่ง E', coverUrl: 'https://via.placeholder.com/150x200?text=Love' },
-        { id: 6, title: 'สงครามจักรวาล', author: 'ผู้แต่ง F', coverUrl: 'https://via.placeholder.com/150x200?text=Space' },
-        { id: 7, title: 'ปริศนาคฤหาสน์เก่า', author: 'ผู้แต่ง G', coverUrl: 'https://via.placeholder.com/150x200?text=Mystery' },
-        { id: 8, title: 'ฮีโร่ไร้นาม', author: 'ผู้แต่ง H', coverUrl: 'https://via.placeholder.com/150x200?text=Hero' },
+      trendingNovels: [ // ข้อมูลจำลองสำหรับนิยายยอดนิยมตลอดกาล
+        { id: 5, title: 'รักนี้ต้องรอด', author: 'ผู้แต่ง E', imageUrl: 'https://via.placeholder.com/150x200?text=Love', genre: 'โรแมนติก', rating: 5.0, views: 1200000, description: 'รักต่างชนชั้นที่ต้องเผชิญกับอุปสรรคมากมาย...' },
+        { id: 6, title: 'สงครามจักรวาล', author: 'ผู้แต่ง F', imageUrl: 'https://via.placeholder.com/150x200?text=Space', genre: 'ไซไฟ', rating: 4.9, views: 1050000, description: 'การต่อสู้เพื่อชิงอำนาจสูงสุดในกาแล็กซี่...' },
+        { id: 7, title: 'ปริศนาคฤหาสน์เก่า', author: 'ผู้แต่ง G', imageUrl: 'https://via.placeholder.com/150x200?text=Mystery', genre: 'สืบสวนสอบสวน', rating: 4.7, views: 980000, description: 'คดีฆาตกรรมสุดซับซ้อนที่รอให้คุณไขปริศนา...' },
+        { id: 8, title: 'ฮีโร่ไร้นาม', author: 'ผู้แต่ง H', imageUrl: 'https://via.placeholder.com/150x200?text=Hero', genre: 'แอ็คชั่น', rating: 4.8, views: 1100000, description: 'เมื่อฮีโร่ไม่ต้องการชื่อเสียงแต่ต้องแบกรับชะตาโลก...' },
       ]
     }
   },
+  // ส่วนที่ใช้สำหรับกำหนด metadata ของหน้า เช่น title, description
   head() {
     return {
       title: 'หน้าแรก - NovelVerse',
@@ -95,8 +99,9 @@ export default {
 </script>
 
 <style scoped>
-/* ยังคงสไตล์สำหรับ v-sheet และ container ของหน้าแรก */
-.content-sheet {
-  /* No specific styles here needed if default Vuetify classes are sufficient */
-}
+/*
+  สไตล์ที่กำหนดในนี้จะใช้เฉพาะกับ Component นี้เท่านั้น
+  ในโค้ดที่คุณให้มา ไม่มี style เฉพาะเจาะจงที่จำเป็นต้องใช้
+  ดังนั้นส่วนนี้จึงว่างเปล่า
+*/
 </style>
