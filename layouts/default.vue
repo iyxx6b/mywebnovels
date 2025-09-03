@@ -2,7 +2,7 @@
   <v-app :dark="$vuetify.theme.dark">
     <AppHeader />
     
-    <AppNavDrawerLeft :drawer.sync="drawer" :mini-variant.sync="miniVariant" :items="navItems" />
+    <AppNavDrawerLeft :drawer.sync="drawer" :mini-variant.sync="miniVariant" :items="filteredNavItems" />
     
     <AppNavDrawerRight :rightDrawer.sync="rightDrawer" />
 
@@ -17,7 +17,6 @@
 </template>
 
 <script>
-// Import your layout components
 import AppHeader from '~/components/layout/AppHeader.vue'
 import AppNavDrawerLeft from '~/components/layout/AppNavDrawerLeft.vue'
 import AppNavDrawerRight from '~/components/layout/AppNavDrawerRight.vue'
@@ -32,24 +31,37 @@ export default {
   },
   data () {
     return {
-      drawer: false, // Controls the left drawer
+      drawer: false,
       miniVariant: false,
-      rightDrawer: false, // Controls the right drawer
-      fixed: false, // For the footer
-      clipped: false, // For the app bar
-      navItems: [ // Navigation menu for the left drawer
+      rightDrawer: false,
+      fixed: false,
+      clipped: false,
+      allNavItems: [ 
         { icon: 'mdi-home', title: 'หน้าแรก', to: '/', color: 'accent' },
         { icon: 'mdi-book-open-variant', title: 'นิยายทั้งหมด', to: '/novels', color: 'accent' },
         { icon: 'mdi-format-list-bulleted-type', title: 'หมวดหมู่', to: '/categories', color: 'accent' },
         { icon: 'mdi-fire', title: 'นิยายยอดนิยม', to: '/popular', color: 'accent' },
         { icon: 'mdi-comment-multiple-outline', title: 'คอมมูนิตี้', to: '/community', color: 'accent' },
         { icon: 'mdi-email', title: 'ติดต่อเรา', to: '/contact', color: 'accent' },
-        { icon: 'mdi-information-outline', title: 'เกี่ยวกับเรา', to: '/about', color: 'accent' }
+        { icon: 'mdi-information-outline', title: 'เกี่ยวกับเรา', to: '/about', color: 'accent' },
+        // เพิ่มลิงก์สำหรับ Admin
+        { icon: 'mdi-account-cog', title: 'จัดการนิยาย', to: '/admin', color: 'accent' }
       ]
     }
   },
+  computed: {
+    // สร้าง computed property เพื่อกรองรายการเมนู
+    filteredNavItems() {
+      const isAdmin = this.$store.state.isAdmin;
+      return this.allNavItems.filter(item => {
+        if (item.to === '/admin') {
+          return isAdmin;
+        }
+        return true;
+      });
+    }
+  },
   mounted() {
-    // Load saved theme on component mount
     if (process.client && this.$vuetify && this.$vuetify.theme) {
       const savedTheme = localStorage.getItem('darkTheme');
       if (savedTheme !== null) {
@@ -58,8 +70,6 @@ export default {
     } else {
       console.warn('Vuetify theme object not available on mounted. Check Vuetify setup.');
     }
-
-    // Listen for events from AppHeader to toggle drawers
     this.$nuxt.$on('toggle-left-drawer', () => {
       this.drawer = !this.drawer;
     });
@@ -68,7 +78,6 @@ export default {
     });
   },
   beforeDestroy() {
-    // Remove event listeners before component is destroyed
     this.$nuxt.$off('toggle-left-drawer');
     this.$nuxt.$off('toggle-right-drawer');
   }
