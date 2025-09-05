@@ -1,17 +1,13 @@
 <template>
-  <v-footer app>
+  <v-footer app padless>
     <v-col class="text-center" cols="12">
-      &copy; {{ new Date().getFullYear() }} — <strong>James Novels</strong>
+      © 2025 — <strong>James Novels</strong>
     </v-col>
   </v-footer>
 </template>
 
 <script>
 export default {
-  name: 'AppFooter',
+  name: 'AppFooter'
 }
 </script>
-
-<style scoped>
-/* Scoped styles specific to this component */
-</style>

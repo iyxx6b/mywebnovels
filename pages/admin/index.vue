@@ -162,7 +162,9 @@ export default {
         if (this.editedIndex > -1) {
           const id = this.editedItem.id;
           // แก้ไขข้อมูลโดยใช้ axios.put
-          await axios.put(`http://localhost/db_webnovels/edit_novel.php?id=${id}`, this.editedItem);
+          await axios.put('http://localhost/db_webnovels/edit_novel.php', editedItem, {
+            headers: { 'Content-Type': 'application/json' }
+          });
         } else {
           // เพิ่มข้อมูลใหม่โดยใช้ axios.post
           await axios.post('http://localhost/db_webnovels/add_novel.php', this.editedItem);

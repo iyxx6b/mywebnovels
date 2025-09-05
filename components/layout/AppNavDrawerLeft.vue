@@ -1,93 +1,92 @@
 <template>
   <v-navigation-drawer
-    v-model="drawer"
-    :mini-variant="miniVariant"
-    :clipped="clipped"
-    fixed
     app
-    :color="$vuetify.theme.dark ? 'secondary' : 'surface'"
-    :dark="$vuetify.theme.dark"
-    class="nav-drawer"
+    v-model="localDrawer"
+    :mini-variant="localMiniVariant"
+    clipped
   >
-    <v-list-item class="px-2 py-4">
+    <!-- Header โลโก้ -->
+    <v-list-item>
       <v-list-item-avatar>
-        <v-img src="/logo.png"></v-img>
+        <v-img src="/logo.png" alt="Logo"></v-img>
       </v-list-item-avatar>
-      <v-list-item-title class="app-title white--text">NovelVerse</v-list-item-title>
-      <v-btn
-        icon
-        @click.stop="miniVariant = !miniVariant"
-      >
-        <v-icon>mdi-chevron-left</v-icon>
-      </v-btn>
+      <v-list-item-content>
+        <v-list-item-title class="title">My Novel</v-list-item-title>
+      </v-list-item-content>
     </v-list-item>
+
     <v-divider></v-divider>
 
-    <v-list dense nav>
+    <!-- รายการเมนู -->
+    <v-list dense>
       <v-list-item
-        v-for="(item, i) in filteredItems"
+        v-for="(item, i) in items"
         :key="i"
         :to="item.to"
         router
         exact
       >
-        <v-list-item-action>
-          <v-icon :color="item.color || 'white'">{{ item.icon }}</v-icon>
-        </v-list-item-action>
+        <v-list-item-icon>
+          <v-icon :color="item.color">{{ item.icon }}</v-icon>
+        </v-list-item-icon>
         <v-list-item-content>
-          <v-list-item-title class="list-item-text">{{ item.title }}</v-list-item-title>
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-list>
+
+    <!-- ปุ่มย่อ/ขยาย Drawer -->
+    <v-divider></v-divider>
+    <v-btn text block @click="toggleMini">
+      <v-icon>{{ localMiniVariant ? 'mdi-chevron-right' : 'mdi-chevron-left' }}</v-icon>
+    </v-btn>
   </v-navigation-drawer>
 </template>
 
 <script>
 export default {
+  name: 'AppNavDrawerLeft',
   props: {
     drawer: {
       type: Boolean,
-      default: false
+      default: false // เพิ่ม default
     },
     miniVariant: {
       type: Boolean,
-      default: false
+      default: false // เพิ่ม default
     },
-    // เปลี่ยนชื่อ props เพื่อให้ชัดเจนขึ้น
-    navItems: {
+    items: {
       type: Array,
       default: () => []
+    }
+  },
+  data() {
+    return {
+      localDrawer: this.drawer
+    }
+  },
+  watch: {
+    drawer(val) {
+      this.localDrawer = val
     },
-    clipped: {
-      type: Boolean,
-      default: false
+    localDrawer(val) {
+      this.$emit('update:drawer', val)
     }
   },
   computed: {
-    // สร้าง computed property เพื่อกรองรายการเมนู
-    filteredItems() {
-      // ใช้ Vuex store เพื่อตรวจสอบสถานะผู้ดูแลระบบ
-      const isAdmin = this.$store.state.isAdmin;
-      
-      // กรองรายการเมนู: แสดงเมนู 'จัดการนิยาย' เฉพาะเมื่อผู้ใช้เป็น Admin
-      return this.navItems.filter(item => {
-        if (item.to === '/admin/novels') {
-          return isAdmin;
-        }
-        return true;
-      });
+    localMiniVariant: {
+      get() {
+        return this.miniVariant
+      },
+      set(val) {
+        this.$emit('update:miniVariant', val)
+      }
+    }
+  },
+  methods: {
+    toggleMini() {
+      this.localMiniVariant = !this.localMiniVariant
     }
   }
 }
 </script>
-
-<style scoped>
-/* Scoped styles for the left navigation drawer */
-.nav-drawer {
-  /* add styles here */
-}
-.list-item-text {
-  font-family: 'Merriweather', serif;
-  font-size: 0.95rem;
-}
-</style>

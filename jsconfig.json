@@ -5,7 +5,9 @@
       "~/*": ["./*"],
       "@/*": ["./*"],
       "~~/*": ["./*"],
-      "@@/*": ["./*"]
+      "@@/*": ["./*"],
+      "vuetify/lib": ["node_modules/vuetify/lib"],
+      "nuxt": ["node_modules/nuxt"]
     }
   },
   "exclude": ["node_modules", ".nuxt", "dist"]

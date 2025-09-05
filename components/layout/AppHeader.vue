@@ -1,6 +1,5 @@
 <template>
   <v-app-bar
-    :clipped-left="clipped"
     fixed
     app
     :color="$vuetify.theme.dark ? 'primary' : 'surface'"
@@ -21,7 +20,10 @@
       <v-btn text to="/" class="nav-button">หน้าแรก</v-btn>
       <v-btn text to="/novels" class="nav-button">นิยายทั้งหมด</v-btn>
       <v-btn text to="/categories" class="nav-button">หมวดหมู่</v-btn>
-      <v-btn text to="/community" class="nav-button">คอมมูนิตี้</v-btn>
+      <v-btn text to="/admin" class="nav-button">
+        <v-icon left>mdi-account-key</v-icon>
+        Admin
+      </v-btn>
     </v-toolbar-items>
 
     <v-spacer />
@@ -63,6 +65,7 @@
 
 <script>
 export default {
+  name: 'AppHeader',
   methods: {
     toggleTheme () {
       if (this.$vuetify && this.$vuetify.theme) {

@@ -1,17 +1,13 @@
 <template>
   <v-app :dark="$vuetify.theme.dark">
     <AppHeader />
-    
     <AppNavDrawerLeft :drawer.sync="drawer" :mini-variant.sync="miniVariant" :items="filteredNavItems" />
-    
     <AppNavDrawerRight :rightDrawer.sync="rightDrawer" />
-
     <v-main>
       <v-container fluid class="main-content-container py-0">
         <nuxt />
       </v-container>
     </v-main>
-
     <AppFooter />
   </v-app>
 </template>
@@ -44,15 +40,15 @@ export default {
         { icon: 'mdi-comment-multiple-outline', title: 'คอมมูนิตี้', to: '/community', color: 'accent' },
         { icon: 'mdi-email', title: 'ติดต่อเรา', to: '/contact', color: 'accent' },
         { icon: 'mdi-information-outline', title: 'เกี่ยวกับเรา', to: '/about', color: 'accent' },
-        // เพิ่มลิงก์สำหรับ Admin
         { icon: 'mdi-account-cog', title: 'จัดการนิยาย', to: '/admin', color: 'accent' }
       ]
     }
   },
   computed: {
-    // สร้าง computed property เพื่อกรองรายการเมนู
     filteredNavItems() {
-      const isAdmin = this.$store.state.isAdmin;
+      const isAdmin = this.$store.state && typeof this.$store.state.isAdmin !== 'undefined'
+        ? this.$store.state.isAdmin
+        : false;
       return this.allNavItems.filter(item => {
         if (item.to === '/admin') {
           return isAdmin;
@@ -62,24 +58,27 @@ export default {
     }
   },
   mounted() {
-    if (process.client && this.$vuetify && this.$vuetify.theme) {
+    if (process.client && this.$vuetify) {
       const savedTheme = localStorage.getItem('darkTheme');
       if (savedTheme !== null) {
         this.$vuetify.theme.dark = JSON.parse(savedTheme);
       }
-    } else {
-      console.warn('Vuetify theme object not available on mounted. Check Vuetify setup.');
     }
-    this.$nuxt.$on('toggle-left-drawer', () => {
-      this.drawer = !this.drawer;
-    });
-    this.$nuxt.$on('toggle-right-drawer', () => {
-      this.rightDrawer = !this.rightDrawer;
-    });
+    // ใช้ $root แทน $nuxt เพื่อความปลอดภัย
+    this.$root.$on('toggle-left-drawer', this.toggleLeftDrawer);
+    this.$root.$on('toggle-right-drawer', this.toggleRightDrawer);
   },
   beforeDestroy() {
-    this.$nuxt.$off('toggle-left-drawer');
-    this.$nuxt.$off('toggle-right-drawer');
+    this.$root.$off('toggle-left-drawer', this.toggleLeftDrawer);
+    this.$root.$off('toggle-right-drawer', this.toggleRightDrawer);
+  },
+  methods: {
+    toggleLeftDrawer() {
+      this.drawer = !this.drawer;
+    },
+    toggleRightDrawer() {
+      this.rightDrawer = !this.rightDrawer;
+    }
   }
 }
 </script>

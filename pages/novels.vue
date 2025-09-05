@@ -82,6 +82,24 @@
       </v-card>
     </v-dialog>
 
+    <v-row>
+      <v-col
+        v-for="novel in novels"
+        :key="novel.id"
+        cols="12"
+        md="4"
+      >
+        <v-card>
+          <v-card-title>{{ novel.title }}</v-card-title>
+          <v-card-subtitle>ผู้แต่ง: {{ novel.author }}</v-card-subtitle>
+          <v-card-text>
+            ประเภท: {{ novel.genre }}<br>
+            {{ novel.content ? novel.content.substring(0, 100) + '...' : '' }}
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-alert v-if="error" type="error" dense>{{ error }}</v-alert>
   </v-container>
 </template>
 
@@ -90,6 +108,7 @@ import axios from 'axios';
 
 export default {
   layout: 'default', // Using the default layout
+  name: 'NovelsPage',
   data() {
     return {
       dialog: false,
@@ -118,7 +137,8 @@ export default {
         genre: '',
         status: 'ongoing',
       },
-        apiBaseUrl: 'http://localhost/novel_api/', // Change this path to where your PHP files are
+      error: '',
+      apiBaseUrl: 'http://localhost/novel_api/', // Change this path to where your PHP files are
     };
   },
   computed: {
