@@ -18,7 +18,7 @@
           <v-data-table
             :headers="headers"
             :items="novels"
-            item-key="novel_id"
+            item-key="id"
             class="elevation-1"
           >
             <template v-slot:item.actions="{ item }">
@@ -31,7 +31,7 @@
               </v-icon>
               <v-icon
                 small
-                @click="deleteNovel(item.novel_id)"
+                @click="deleteNovel(item.id)"
               >
                 mdi-delete
               </v-icon>
@@ -41,7 +41,7 @@
       </v-col>
     </v-row>
 
-    <!-- Dialog for Add/Edit Form -->
+    <!-- Dialog Add/Edit -->
     <v-dialog v-model="dialog" max-width="600px">
       <v-card>
         <v-card-title>
@@ -54,23 +54,28 @@
                 v-model="editedNovel.title"
                 label="ชื่อนิยาย"
                 :rules="[v => !!v || 'กรุณากรอกชื่อนิยาย']"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="editedNovel.author"
                 label="ผู้เขียน"
                 :rules="[v => !!v || 'กรุณากรอกชื่อผู้เขียน']"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="editedNovel.genre"
                 label="ประเภท"
                 :rules="[v => !!v || 'กรุณากรอกประเภทนิยาย']"
-              ></v-text-field>
+              />
               <v-select
                 v-model="editedNovel.status"
                 :items="['ongoing', 'completed']"
                 label="สถานะ"
                 :rules="[v => !!v || 'กรุณาเลือกสถานะ']"
-              ></v-select>
+              />
+              <v-textarea
+                v-model="editedNovel.content"
+                label="เนื้อหานิยาย"
+                :rules="[v => !!v || 'กรุณากรอกเนื้อหา']"
+              />
             </v-form>
           </v-container>
         </v-card-text>
@@ -82,6 +87,7 @@
       </v-card>
     </v-dialog>
 
+    <!-- Card แสดงรายการ -->
     <v-row>
       <v-col
         v-for="novel in novels"
@@ -93,57 +99,62 @@
           <v-card-title>{{ novel.title }}</v-card-title>
           <v-card-subtitle>ผู้แต่ง: {{ novel.author }}</v-card-subtitle>
           <v-card-text>
-            ประเภท: {{ novel.genre }}<br>
+            ประเภท: {{ novel.genre }} <br />
+            สถานะ: {{ novel.status }} <br />
             {{ novel.content ? novel.content.substring(0, 100) + '...' : '' }}
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
+
     <v-alert v-if="error" type="error" dense>{{ error }}</v-alert>
   </v-container>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
-  layout: 'default', // Using the default layout
-  name: 'NovelsPage',
+  layout: "default",
+  name: "NovelsPage",
   data() {
     return {
       dialog: false,
       valid: false,
       headers: [
-        { text: 'ID', value: 'novel_id' },
-        { text: 'ชื่อนิยาย', value: 'title' },
-        { text: 'ผู้เขียน', value: 'author' },
-        { text: 'ประเภท', value: 'genre' },
-        { text: 'สถานะ', value: 'status' },
-        { text: 'จัดการ', value: 'actions', sortable: false },
+        { text: "ID", value: "id" },
+        { text: "ชื่อนิยาย", value: "title" },
+        { text: "ผู้เขียน", value: "author" },
+        { text: "ประเภท", value: "genre" },
+        { text: "สถานะ", value: "status" },
+        { text: "จัดการ", value: "actions", sortable: false },
       ],
       novels: [],
       editedIndex: -1,
       editedNovel: {
-        novel_id: 0,
-        title: '',
-        author: '',
-        genre: '',
-        status: 'ongoing',
+        id: 0,
+        title: "",
+        author: "",
+        genre: "",
+        status: "ongoing",
+        content: "",
       },
       defaultNovel: {
-        novel_id: 0,
-        title: '',
-        author: '',
-        genre: '',
-        status: 'ongoing',
+        id: 0,
+        title: "",
+        author: "",
+        genre: "",
+        status: "ongoing",
+        content: "",
       },
-      error: '',
-      apiBaseUrl: 'http://localhost/novel_api/', // Change this path to where your PHP files are
+      error: "",
+      // ใช้ path ที่ตรงกับโฟลเดอร์ db_webnovels
+      apiBaseUrl: "http://localhost/db_webnovels/",
     };
   },
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? 'เพิ่มนิยายใหม่' : 'แก้ไขนิยาย';
+      return this.editedIndex === -1 ? "เพิ่มนิยายใหม่" : "แก้ไขนิยาย";
     },
   },
   methods: {
@@ -162,60 +173,56 @@ export default {
       this.$nextTick(() => {
         this.editedNovel = Object.assign({}, this.defaultNovel);
         this.editedIndex = -1;
-        this.$refs.form.resetValidation();
+        if (this.$refs.form) {
+          this.$refs.form.resetValidation();
+        }
       });
     },
     async saveNovel() {
-      if (!this.$refs.form.validate()) {
-        return;
-      }
-      
-      const formData = new FormData();
-      for (const key in this.editedNovel) {
-        formData.append(key, this.editedNovel[key]);
-      }
+      if (!this.$refs.form.validate()) return;
 
       try {
         if (this.editedIndex > -1) {
-          // Update existing novel
-          await axios.post(`${this.apiBaseUrl}novel_update.php`, this.editedNovel);
+          // Update
+          await axios.put(`${this.apiBaseUrl}edit_novel.php`, this.editedNovel);
         } else {
-          // Add new novel
-          await axios.post(`${this.apiBaseUrl}novel_insert.php`, this.editedNovel);
+          // Insert
+          await axios.post(`${this.apiBaseUrl}add_novel.php`, this.editedNovel);
         }
-        await this.fetchNovels(); // Refresh data after save
+        await this.fetchNovels();
         this.closeForm();
       } catch (error) {
-        console.error('Save failed:', error);
+        console.error("Save failed:", error.response?.data || error.message);
+        this.error = "ไม่สามารถบันทึกข้อมูลได้";
       }
     },
     async deleteNovel(id) {
-      if (confirm('คุณต้องการลบข้อมูลนี้หรือไม่?')) {
+      if (confirm("คุณต้องการลบข้อมูลนี้หรือไม่?")) {
         try {
-          await axios.get(`${this.apiBaseUrl}novel_delete.php?id=${id}`);
-          await this.fetchNovels(); // Refresh data after delete
+          await axios.get(`${this.apiBaseUrl}delete_novel.php?id=${id}`);
+          await this.fetchNovels();
         } catch (error) {
-          console.error('Delete failed:', error);
+          console.error("Delete failed:", error);
+          this.error = "ไม่สามารถลบข้อมูลได้";
         }
       }
     },
     async fetchNovels() {
       try {
-        const response = await axios.get(`${this.apiBaseUrl}novel_select.php`);
+        const response = await axios.get(`${this.apiBaseUrl}get_novels.php`);
         this.novels = response.data;
       } catch (error) {
-        console.error('Fetch failed:', error);
+        console.error("Fetch failed:", error);
+        this.error = "ไม่สามารถโหลดข้อมูลได้";
       }
-    }
+    },
   },
   async mounted() {
-    // We can't use asyncData for local PHP API, so we fetch data on mounted hook.
-    // For a production app, this should use a proper backend framework.
     await this.fetchNovels();
-  }
+  },
 };
 </script>
 
 <style scoped>
-/* No scoped styles needed as we are using Vuetify components */
+/* ใช้ Vuetify เป็นหลัก */
 </style>
