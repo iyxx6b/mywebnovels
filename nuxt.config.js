@@ -14,6 +14,7 @@ export default {
   // Modules (ถ้าคุณเลือก Axios หรืออื่นๆ)
   modules: [
     '@nuxtjs/axios',
+    '@nuxt/content'
   ],
 
   // ส่วนของ Head: เพิ่ม Google Fonts เพื่อใช้ฟอนต์ที่ดูแฟนตาซี
@@ -31,7 +32,7 @@ export default {
       // Google Fonts for a classic/fantasy feel
       { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
       { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: true },
-      { href: 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Merriweather:wght@300;400;700&display=swap', rel: 'stylesheet' }
+      { href: 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400..700&family=Cormorant+Garamond:wght@300;400;700&family=EB+Garamond:wght@400..800&family=Old+Standard+TT&family=Playfair+Display:wght@400..900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Roboto+Slab&family=Roboto:wght@100;300;400;500;700;900&family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:wght@300;400;700&display=swap', rel: 'stylesheet' }
     ]
   },
 
@@ -42,35 +43,32 @@ export default {
       dark: true, // ตั้งค่าเริ่มต้นเป็น Dark Mode ตามภาพตัวอย่าง
       themes: {
         light: {
-          primary: '#424242',   // สีหลัก (Dark Grey for headings/primary elements)
-          accent: '#7E57C2',    // สีเน้น (Purple for highlights/buttons)
+          primary: '#424242',   // สีหลัก (Dark Grey for headings/primary elements)
+          accent: '#7E57C2',    // สีเน้น (Purple for highlights/buttons)
           secondary: '#616161', // สีรอง (Grey for secondary text)
           info: '#2196F3',
           warning: '#FB8C00',
           error: '#FF5255',
           success: '#4CAF50',
           background: '#F0F2F5', // พื้นหลังอ่อน
-          surface: '#FFFFFF'    // พื้นผิว Card/Sheet อ่อน
+          surface: '#FFFFFF'    // พื้นผิว Card/Sheet อ่อน
         },
         dark: {
-          primary: '#212121',   // สีหลัก (Very Dark Grey for AppBar, Footer)
-          accent: '#BB86FC',    // สีเน้น (Purple for highlights/buttons - lighter for dark mode)
+          primary: '#212121',   // สีหลัก (Very Dark Grey for AppBar, Footer)
+          accent: '#BB86FC',    // สีเน้น (Purple for highlights/buttons - lighter for dark mode)
           secondary: '#363636', // สีรอง (Dark Grey for drawer/some cards, slightly lighter than background)
           info: '#2196F3',
           warning: '#FB8C00',
           error: '#CF6679',
-          success: '#03DAC6',
-          background: '#1a1a1a', // พื้นหลังเข้มที่สุด
-          surface: '#2c2c2c'    // พื้นผิว Card/Sheet เข้ม
+          success: '#4CAF50',
+          background: '#121212', // พื้นหลังเข้ม
+          surface: '#1E1E1E'    // พื้นผิว Card/Sheet เข้ม
         }
       }
     }
   },
-
-  // >>>>>> ส่วนของ Axios ที่เปลี่ยนไป <<<<<<
-  axios: {
-    // ลบ baseURL เดิมออก เนื่องจาก Backend ใหม่เป็น PHP
-  },
   
-  // ... (ส่วนอื่นๆ เช่น build)
+  // Build configuration
+  build: {
+  }
 }

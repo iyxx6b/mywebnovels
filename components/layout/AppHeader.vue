@@ -18,7 +18,6 @@
 
     <v-toolbar-items class="d-none d-md-flex">
       <v-btn text to="/" class="nav-button">หน้าแรก</v-btn>
-      <v-btn text to="/novels" class="nav-button">นิยายทั้งหมด</v-btn>
       <v-btn text to="/categories" class="nav-button">หมวดหมู่</v-btn>
       <v-btn text to="/admin" class="nav-button">
         <v-icon left>mdi-account-key</v-icon>
