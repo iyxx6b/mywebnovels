@@ -1,178 +1,72 @@
 <template>
   <v-container>
-    <h1 class="text-h4 mb-4">ระบบจัดการนิยาย</h1>
+    <v-card class="pa-5">
+      <v-card-title>
+        📚 รายการนิยายทั้งหมด
+      </v-card-title>
 
-    <v-data-table
-      :headers="headers"
-      :items="items"
-      :loading="loading"
-      class="elevation-1"
-    >
-      <template v-slot:top>
-        <v-toolbar flat>
-          <v-toolbar-title>รายชื่อนิยาย</v-toolbar-title>
-          <v-divider class="mx-4" inset vertical></v-divider>
-          <v-spacer></v-spacer>
-          <v-dialog v-model="dialog" max-width="500px">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
-                <v-icon left>mdi-plus</v-icon>
-                เพิ่มนิยายใหม่
-              </v-btn>
-            </template>
+      <v-data-table
+        :headers="headers"
+        :items="novels"
+        item-key="id"
+        class="elevation-1"
+      >
+        <!-- ลำดับ -->
+        <template v-slot:item.index="{ index }">
+          {{ index + 1 }}
+        </template>
 
-            <v-card>
-              <v-card-title>
-                <span class="text-h5">{{ formTitle }}</span>
-              </v-card-title>
+        <!-- ปกนิยาย -->
+        <template v-slot:item.cover_image="{ item }">
+          <v-img
+            :src="item.cover_image || 'https://placehold.co/80x100?text=No+Image'"
+            max-width="80"
+            max-height="100"
+            contain
+          />
+        </template>
 
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.title" label="ชื่อนิยาย"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.author" label="ผู้แต่ง"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.genre" label="ประเภท"></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="close">ยกเลิก</v-btn>
-                <v-btn color="blue darken-1" text @click="save">บันทึก</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </v-toolbar>
-      </template>
-
-      <template v-slot:item.actions="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)">
-          mdi-pencil
-        </v-icon>
-        <v-icon small @click="deleteItem(item.id)">
-          mdi-delete
-        </v-icon>
-      </template>
-    </v-data-table>
+        <!-- คำโปรย -->
+        <template v-slot:item.description="{ item }">
+          <span>{{ item.description ? item.description.slice(0, 50) + "..." : "-" }}</span>
+        </template>
+      </v-data-table>
+    </v-card>
   </v-container>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
+  name: "NovelsIndexPage",
   data: () => ({
-    dialog: false,
-    loading: false,
     headers: [
-      { text: 'ID', value: 'id' },
-      { text: 'ชื่อนิยาย', value: 'title' },
-      { text: 'ผู้แต่ง', value: 'author' },
-      { text: 'ประเภท', value: 'genre' },
-      { text: 'จัดการ', value: 'actions', sortable: false },
+      { text: "ลำดับ", value: "index", sortable: false },
+      { text: "ปก", value: "cover_image", sortable: false },
+      { text: "ชื่อเรื่อง", value: "title" },
+      { text: "ผู้แต่ง", value: "author" },
+      { text: "ประเภท", value: "genre" },
+      { text: "สถานะ", value: "status" },
+      { text: "คำโปรย", value: "description" },
     ],
-    items: [],
-    editedIndex: -1,
-    editedItem: {
-      title: '',
-      author: '',
-      genre: '',
-    },
-    defaultItem: {
-      title: '',
-      author: '',
-      genre: '',
-    },
+    novels: [],
+    apiBase: "http://localhost/db_webnovels/",
   }),
 
-  computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? 'เพิ่มนิยายใหม่' : 'แก้ไขนิยาย';
-    },
-  },
-
-  watch: {
-    dialog(val) {
-      val || this.close();
-    },
-  },
-
-  created() {
-    this.fetchItems();
-  },
-
   methods: {
-    // ฟังก์ชันสำหรับดึงข้อมูลนิยายทั้งหมด
-    async fetchItems() {
-      this.loading = true;
+    async fetchNovels() {
       try {
-        const response = await axios.get('http://localhost/db_webnovels/get_novels.php');
-        if (Array.isArray(response.data)) {
-          this.items = response.data;
-        } else {
-          console.error('API response is not an array:', response.data);
-          this.items = [];
-        }
-      } catch (error) {
-        console.error('เกิดข้อผิดพลาดในการดึงข้อมูล:', error);
-        this.items = [];
-      } finally {
-        this.loading = false;
+        const res = await axios.get(this.apiBase + "get_novels.php");
+        this.novels = res.data;
+      } catch (err) {
+        console.error("โหลดข้อมูลล้มเหลว:", err);
       }
     },
+  },
 
-    // ฟังก์ชันสำหรับเปิด Dialog เพื่อแก้ไข
-    editItem(item) {
-      this.editedIndex = this.items.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
-    },
-
-    // ฟังก์ชันสำหรับลบข้อมูล
-    async deleteItem(id) {
-      if (confirm('คุณต้องการลบข้อมูลนี้หรือไม่?')) {
-        try {
-          await axios.delete(`http://localhost/db_webnovels/delete_novel.php?id=${id}`);
-          this.fetchItems();
-        } catch (error) {
-          console.error('เกิดข้อผิดพลาดในการลบข้อมูล:', error);
-        }
-      }
-    },
-
-    // ฟังก์ชันสำหรับปิด Dialog และรีเซ็ตฟอร์ม
-    close() {
-      this.dialog = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
-    },
-
-    // ฟังก์ชันสำหรับบันทึกข้อมูล (เพิ่ม/แก้ไข)
-    async save() {
-      try {
-        if (this.editedIndex > -1) {
-          const id = this.editedItem.id;
-          // แก้ไขข้อมูลโดยใช้ axios.put
-          await axios.put(`http://localhost/db_webnovels/edit_novel.php?id=${id}`, this.editedItem);
-        } else {
-          // เพิ่มข้อมูลใหม่โดยใช้ axios.post
-          await axios.post('http://localhost/db_webnovels/add_novel.php', this.editedItem);
-        }
-        this.fetchItems();
-        this.close();
-      } catch (error) {
-        console.error('เกิดข้อผิดพลาดในการบันทึกข้อมูล:', error);
-      }
-    },
+  mounted() {
+    this.fetchNovels();
   },
 };
 </script>
