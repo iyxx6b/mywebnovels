@@ -14,39 +14,34 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      // --- ส่วนสำคัญ: Import Fonts สำหรับธีมแฟนตาซี ---
       { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
       { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: true },
       { href: 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Merriweather:wght@300;400;700&display=swap', rel: 'stylesheet' }
     ]
   },
 
-  // Global CSS
   css: [],
 
-  // Plugins to run before rendering page
-  plugins: [],
+  plugins: [
+    '~/plugins/vuetify.js'
+  ],
 
   // Auto import components
   components: true,
 
-  // Modules for dev and build (recommended)
   buildModules: [
-    '@nuxtjs/vuetify', // Vuetify ต้องอยู่ที่นี่
+    '@nuxtjs/vuetify',
   ],
 
-  // Modules
   modules: [
     '@nuxtjs/axios',
   ],
 
-  // Axios module configuration
-  // --- ที่อยู่ของ Backend API ของคุณ ---
+  // **จุดที่แก้ไข:** เปลี่ยน baseURL ให้ชี้ไปที่โฟลเดอร์ Backend ของคุณ
   axios: {
     baseURL: 'http://localhost/db_webnovels/api'
   },
   
-  // --- เปิดใช้งาน Vue Devtools ---
   vue: {
     config: {
       productionTip: false,
@@ -54,11 +49,17 @@ export default {
     }
   },
 
-  // Vuetify module configuration
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
+    treeShake: true,
+    defaultAssets: {
+      font: {
+        family: 'Roboto'
+      },
+      icons: 'mdi'
+    },
     theme: {
-      dark: true, // ตั้งค่า Dark Mode เป็นค่าเริ่มต้น
+      dark: true,
       themes: {
         dark: {
           primary: '#212121',
@@ -76,6 +77,5 @@ export default {
     }
   },
 
-  // Build Configuration
   build: {}
 }

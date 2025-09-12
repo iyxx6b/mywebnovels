@@ -1,6 +1,5 @@
 <template>
-  <!-- กลับมาใช้โค้ดแบบเดิมที่ถูกต้องได้เลย -->
-  <v-app :dark="$vuetify.theme.dark">
+  <v-app :dark="isDark">
     <AppHeader />
     <AppNavDrawerLeft :drawer.sync="drawer" :mini-variant.sync="miniVariant" :items="filteredNavItems" />
     <AppNavDrawerRight :rightDrawer.sync="rightDrawer" />
@@ -48,6 +47,11 @@ export default {
         return this.allNavItems;
       }
       return this.allNavItems.filter(item => !item.adminOnly);
+    },
+    // **จุดที่แก้ไข:** สร้าง computed property เพื่อตรวจสอบก่อนใช้งาน
+    isDark() {
+      // ตรวจสอบว่า $vuetify.theme มีอยู่จริงหรือไม่ก่อนจะเข้าถึง .dark
+      return this.$vuetify && this.$vuetify.theme ? this.$vuetify.theme.dark : true;
     }
   },
   created() {
@@ -56,6 +60,14 @@ export default {
   mounted() {
     this.$root.$on('toggle-left-drawer', this.toggleLeftDrawer);
     this.$root.$on('toggle-right-drawer', this.toggleRightDrawer);
+    
+    // (เพิ่มเติม) โค้ดสำหรับโหลด theme ที่เคยบันทึกไว้
+    if (process.client) {
+      const isDark = localStorage.getItem('darkTheme');
+      if (isDark !== null) {
+        this.$vuetify.theme.dark = JSON.parse(isDark);
+      }
+    }
   },
   beforeDestroy() {
     this.$root.$off('toggle-left-drawer', this.toggleLeftDrawer);
