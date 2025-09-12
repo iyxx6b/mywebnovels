@@ -66,6 +66,9 @@
 
 <script>
 export default {
+  // เพิ่ม middleware เพื่อป้องกันหน้านี้
+  middleware: 'admin-auth',
+  
   name: "AdminNovelsPage",
   data() {
     return {
@@ -125,7 +128,6 @@ export default {
     },
     async saveNovel() {
       const formData = new FormData()
-      // ส่งข้อมูลทั้งหมดใน editedNovel ไปกับ FormData
       for (const key in this.editedNovel) {
         formData.append(key, this.editedNovel[key]);
       }

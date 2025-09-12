@@ -48,26 +48,22 @@ export default {
       }
       return this.allNavItems.filter(item => !item.adminOnly);
     },
-    // **จุดที่แก้ไข:** สร้าง computed property เพื่อตรวจสอบก่อนใช้งาน
     isDark() {
-      // ตรวจสอบว่า $vuetify.theme มีอยู่จริงหรือไม่ก่อนจะเข้าถึง .dark
       return this.$vuetify && this.$vuetify.theme ? this.$vuetify.theme.dark : true;
     }
   },
   created() {
-    this.$store.commit('INITIALIZE_STORE');
-  },
-  mounted() {
-    this.$root.$on('toggle-left-drawer', this.toggleLeftDrawer);
-    this.$root.$on('toggle-right-drawer', this.toggleRightDrawer);
-    
-    // (เพิ่มเติม) โค้ดสำหรับโหลด theme ที่เคยบันทึกไว้
     if (process.client) {
       const isDark = localStorage.getItem('darkTheme');
       if (isDark !== null) {
         this.$vuetify.theme.dark = JSON.parse(isDark);
       }
     }
+    this.$store.commit('INITIALIZE_STORE');
+  },
+  mounted() {
+    this.$root.$on('toggle-left-drawer', this.toggleLeftDrawer);
+    this.$root.$on('toggle-right-drawer', this.toggleRightDrawer);
   },
   beforeDestroy() {
     this.$root.$off('toggle-left-drawer', this.toggleLeftDrawer);
