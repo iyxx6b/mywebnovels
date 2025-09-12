@@ -1,42 +1,70 @@
+// frontend/store/index.js
+
+// STATE: ใช้เก็บข้อมูลหลักของแอปพลิเคชัน
 export const state = () => ({
-  user: null, // เก็บข้อมูลผู้ใช้
-  isAuthenticated: false, // สถานะการล็อกอิน
-  isAdmin: false // สถานะผู้ดูแลระบบ
+  user: null,
+  token: null,
+  isAuthenticated: false
 });
 
+// MUTATIONS: ฟังก์ชันเดียวที่สามารถแก้ไข State ได้โดยตรง
 export const mutations = {
-  SET_USER(state, user) {
+  SET_AUTH(state, { user, token }) {
     state.user = user;
-    state.isAuthenticated = !!user;
-    // ตรวจสอบบทบาทของผู้ใช้ (สมมติว่าถ้าอีเมลเป็น admin@novelverse.com จะเป็น admin)
-    state.isAdmin = user && user.email === 'admin@novelverse.com';
+    state.token = token;
+    state.isAuthenticated = true;
+    this.$axios.setToken(token, 'Bearer');
+    if (process.client) {
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+    }
   },
   LOGOUT(state) {
     state.user = null;
+    state.token = null;
     state.isAuthenticated = false;
-    state.isAdmin = false;
+    this.$axios.setToken(false);
+    if (process.client) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    }
+  },
+  // --- นี่คือ Mutation ที่เคยหายไป ---
+  INITIALIZE_STORE(state) {
+    if (process.client) {
+      const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (token && user) {
+        this.commit('SET_AUTH', { user, token });
+      }
+    }
   }
 };
 
+// ACTIONS: ฟังก์ชันสำหรับทำงานที่ซับซ้อน (เช่น เรียก API)
 export const actions = {
-  // Action สำหรับล็อกอิน
   async login({ commit }, credentials) {
     try {
-      // โค้ดจริงจะมีการเรียก API เพื่อตรวจสอบข้อมูลล็อกอิน
-      // ตัวอย่างจำลอง:
-      const user = { email: credentials.email, name: 'Admin User' };
-      if (credentials.email === 'admin@novelverse.com' && credentials.password === 'password') {
-        commit('SET_USER', user);
+      const response = await this.$axios.post('/login.php', credentials);
+      if (response.data && response.data.token) {
+        const { user, token } = response.data;
+        commit('SET_AUTH', { user, token });
         return true;
       }
       return false;
     } catch (error) {
-      console.error('Login failed:', error);
       return false;
     }
   },
-  // Action สำหรับล็อกเอาท์
   logout({ commit }) {
     commit('LOGOUT');
   }
+};
+
+// GETTERS: ใช้สำหรับดึงข้อมูลจาก State ไปแสดงผล
+export const getters = {
+  // --- นี่คือ Getters ที่เคยหายไป ---
+  isAuthenticated: state => state.isAuthenticated,
+  loggedInUser: state => state.user,
+  isAdmin: state => state.isAuthenticated && state.user && state.user.role === 'admin'
 };

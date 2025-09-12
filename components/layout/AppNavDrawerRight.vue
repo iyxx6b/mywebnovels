@@ -4,8 +4,9 @@
     :right="right"
     temporary
     fixed
-    :color="$vuetify.theme.dark ? 'secondary' : 'surface'"
-    :dark="$vuetify.theme.dark"
+    width="300"
+    :color="isDark ? 'secondary' : 'surface'"
+    :dark="isDark"
     class="nav-drawer right-drawer-border"
   >
     <v-list>
@@ -16,65 +17,75 @@
           </v-btn>
         </v-list-item-action>
       </v-list-item>
-      <v-list-item to="/user/profile">
-        <v-list-item-action>
-          <v-icon>mdi-account-circle</v-icon>
-        </v-list-item-action>
-        <v-list-item-content>
-          <v-list-item-title>โปรไฟล์ของฉัน</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item to="/settings">
-        <v-list-item-action>
-          <v-icon>mdi-cog</v-icon>
-        </v-list-item-action>
-        <v-list-item-content>
-          <v-list-item-title>ตั้งค่า</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
+
       <v-divider></v-divider>
-      <v-list-item @click="logoutUser">
-        <v-list-item-action>
-          <v-icon color="error">mdi-logout</v-icon>
-        </v-list-item-action>
+
+      <v-list-item>
         <v-list-item-content>
-          <v-list-item-title>ออกจากระบบ</v-list-item-title>
+          <v-list-item-title class="text-h6">
+            Notifications
+          </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
+
+      <v-list-item>
+        <v-list-item-icon>
+          <v-icon>mdi-bell-outline</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>No new notifications</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+
     </v-list>
   </v-navigation-drawer>
 </template>
 
 <script>
 export default {
+  name: 'AppNavDrawerRight',
   props: {
     rightDrawer: {
       type: Boolean,
       default: false
     }
   },
+  // =================================================================
+  // ===== จุดที่แก้ไข: สร้าง isDark ขึ้นมาเก็บสถานะชั่วคราว =====
+  // =================================================================
   data() {
     return {
-      right: true
+      right: true,
+      isDark: true // ตั้งค่าเริ่มต้นเป็น true (dark mode)
+    }
+  },
+  // =================================================================
+  // ===== จุดที่แก้ไข: เพิ่ม mounted และ watch =====
+  // =================================================================
+  watch: {
+    // คอยดูว่าค่า theme ใน vuetify เปลี่ยนแปลงหรือไม่
+    '$vuetify.theme.dark'(newVal) {
+      this.isDark = newVal;
+    }
+  },
+  mounted() {
+    // mounted จะทำงานเฉพาะในเบราว์เซอร์เท่านั้น
+    // เราจะอัปเดตค่า isDark ที่แท้จริงหลังจากที่หน้าเว็บโหลดในเบราว์เซอร์เสร็จแล้ว
+    if (process.client) {
+      this.isDark = this.$vuetify.theme.dark;
     }
   },
   methods: {
     closeRightDrawer() {
+      // Use $emit to update the prop in the parent component
       this.$emit('update:rightDrawer', false);
-    },
-    logoutUser() {
-      alert('Logout functionality to be implemented.');
     }
   }
 }
 </script>
 
 <style scoped>
-/* Scoped styles for the right navigation drawer */
 .right-drawer-border {
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
-}
-.v-application--light .right-drawer-border {
-  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
 }
 </style>

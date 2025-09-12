@@ -1,4 +1,5 @@
 <template>
+  <!-- กลับมาใช้โค้ดแบบเดิมที่ถูกต้องได้เลย -->
   <v-app :dark="$vuetify.theme.dark">
     <AppHeader />
     <AppNavDrawerLeft :drawer.sync="drawer" :mini-variant.sync="miniVariant" :items="filteredNavItems" />
@@ -13,6 +14,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import AppHeader from '~/components/layout/AppHeader.vue'
 import AppNavDrawerLeft from '~/components/layout/AppNavDrawerLeft.vue'
 import AppNavDrawerRight from '~/components/layout/AppNavDrawerRight.vue'
@@ -30,41 +32,28 @@ export default {
       drawer: false,
       miniVariant: false,
       rightDrawer: false,
-      fixed: false,
-      clipped: false,
-      allNavItems: [ 
-        { icon: 'mdi-home', title: 'หน้าแรก', to: '/', color: 'accent' },
-        { icon: 'mdi-book-open-variant', title: 'นิยายทั้งหมด', to: '/novels', color: 'accent' },
-        { icon: 'mdi-format-list-bulleted-type', title: 'หมวดหมู่', to: '/categories', color: 'accent' },
-        { icon: 'mdi-fire', title: 'นิยายยอดนิยม', to: '/popular', color: 'accent' },
-        { icon: 'mdi-comment-multiple-outline', title: 'คอมมูนิตี้', to: '/community', color: 'accent' },
-        { icon: 'mdi-email', title: 'ติดต่อเรา', to: '/contact', color: 'accent' },
-        { icon: 'mdi-information-outline', title: 'เกี่ยวกับเรา', to: '/about', color: 'accent' },
-        { icon: 'mdi-account-cog', title: 'จัดการนิยาย', to: '/admin', color: 'accent' }
+      allNavItems: [
+          { icon: 'mdi-home', title: 'หน้าแรก', to: '/', color: 'accent' },
+          { icon: 'mdi-book-open-variant', title: 'นิยายทั้งหมด', to: '/novels', color: 'accent' },
+          { icon: 'mdi-format-list-bulleted-type', title: 'หมวดหมู่', to: '/categories', color: 'accent' },
+          { icon: 'mdi-account-cog', title: 'จัดการนิยาย', to: '/admin/novels', color: 'accent', adminOnly: true },
+          { icon: 'mdi-account-group', title: 'จัดการผู้ใช้', to: '/admin/users', color: 'accent', adminOnly: true }
       ]
     }
   },
   computed: {
+    ...mapGetters(['isAdmin']),
     filteredNavItems() {
-      const isAdmin = this.$store.state && typeof this.$store.state.isAdmin !== 'undefined'
-        ? this.$store.state.isAdmin
-        : false;
-      return this.allNavItems.filter(item => {
-        if (item.to === '/admin') {
-          return isAdmin;
-        }
-        return true;
-      });
+      if (this.isAdmin) {
+        return this.allNavItems;
+      }
+      return this.allNavItems.filter(item => !item.adminOnly);
     }
   },
+  created() {
+    this.$store.commit('INITIALIZE_STORE');
+  },
   mounted() {
-    if (process.client && this.$vuetify) {
-      const savedTheme = localStorage.getItem('darkTheme');
-      if (savedTheme !== null) {
-        this.$vuetify.theme.dark = JSON.parse(savedTheme);
-      }
-    }
-    // ใช้ $root แทน $nuxt เพื่อความปลอดภัย
     this.$root.$on('toggle-left-drawer', this.toggleLeftDrawer);
     this.$root.$on('toggle-right-drawer', this.toggleRightDrawer);
   },
