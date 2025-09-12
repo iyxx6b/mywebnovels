@@ -24,34 +24,36 @@
             :key="novel.id"
             cols="12" sm="6" md="4" lg="2"
           >
-            <v-card class="mx-auto hover-card" max-width="200">
-              <v-img
-                :src="getCoverImage(novel.cover_image)"
-                height="280px"
-                class="rounded"
-              >
-                <div class="rank-number">#{{ index + 1 }}</div>
-                <v-chip
-                  small
-                  color="deep-purple accent-4"
-                  text-color="white"
-                  class="status-chip"
+            <nuxt-link :to="`/novels/${novel.id}`" class="text-decoration-none">
+              <v-card class="mx-auto hover-card" max-width="200">
+                <v-img
+                  :src="getCoverImage(novel.cover_image)"
+                  height="280px"
+                  class="rounded"
                 >
-                  {{ novel.status }}
-                </v-chip>
-              </v-img>
-              <v-card-text class="pa-2">
-                <div class="font-weight-bold text-truncate">{{ novel.title }}</div>
-                <div class="caption grey--text">by {{ novel.author }}</div>
-                <v-progress-linear
-                  :value="novel.rating || 70"
-                  height="6"
-                  color="amber"
-                  class="mt-2"
-                ></v-progress-linear>
-                <div class="caption">{{ novel.rating || 70 }}%</div>
-              </v-card-text>
-            </v-card>
+                  <div class="rank-number">#{{ index + 1 }}</div>
+                  <v-chip
+                    small
+                    color="deep-purple accent-4"
+                    text-color="white"
+                    class="status-chip"
+                  >
+                    {{ novel.status }}
+                  </v-chip>
+                </v-img>
+                <v-card-text class="pa-2">
+                  <div class="font-weight-bold text-truncate">{{ novel.title }}</div>
+                  <div class="caption grey--text">by {{ novel.author }}</div>
+                  <v-progress-linear
+                    :value="novel.rating || 70"
+                    height="6"
+                    color="amber"
+                    class="mt-2"
+                  ></v-progress-linear>
+                  <div class="caption">{{ novel.rating || 70 }}%</div>
+                </v-card-text>
+              </v-card>
+            </nuxt-link>
           </v-col>
         </v-row>
       </section>
@@ -66,26 +68,28 @@
             :key="novel.id"
             cols="12" sm="6" md="4" lg="2"
           >
-            <v-card class="mx-auto hover-card" max-width="200">
-              <v-img
-                :src="getCoverImage(novel.cover_image)"
-                height="280px"
-                class="rounded"
-              >
-                <v-chip
-                  small
-                  color="deep-purple accent-4"
-                  text-color="white"
-                  class="status-chip"
+            <nuxt-link :to="`/novels/${novel.id}`" class="text-decoration-none">
+              <v-card class="mx-auto hover-card" max-width="200">
+                <v-img
+                  :src="getCoverImage(novel.cover_image)"
+                  height="280px"
+                  class="rounded"
                 >
-                  {{ novel.status }}
-                </v-chip>
-              </v-img>
-              <v-card-text class="pa-2">
-                <div class="font-weight-bold text-truncate">{{ novel.title }}</div>
-                <div class="caption grey--text">by {{ novel.author }}</div>
-              </v-card-text>
-            </v-card>
+                  <v-chip
+                    small
+                    color="deep-purple accent-4"
+                    text-color="white"
+                    class="status-chip"
+                  >
+                    {{ novel.status }}
+                  </v-chip>
+                </v-img>
+                <v-card-text class="pa-2">
+                  <div class="font-weight-bold text-truncate">{{ novel.title }}</div>
+                  <div class="caption grey--text">by {{ novel.author }}</div>
+                </v-card-text>
+              </v-card>
+            </nuxt-link>
           </v-col>
         </v-row>
       </section>
@@ -100,8 +104,8 @@ export default {
     return {
       popularNovels: [],
       newReleases: [],
-      isLoading: true, // (เพิ่ม) state สำหรับ loading
-      error: null,     // (เพิ่ม) state สำหรับ error
+      isLoading: true,
+      error: null,
     }
   },
   methods: {
@@ -115,7 +119,6 @@ export default {
     this.isLoading = true;
     this.error = null;
     try {
-      // (แก้ไข) เปลี่ยน URL เป็นแบบ relative path เพื่อให้ไปใช้ baseURL จาก nuxt.config.js
       const res = await this.$axios.get("/get_novels.php");
       
       const novels = res.data;
@@ -127,14 +130,12 @@ export default {
         }));
         this.newReleases = novels.slice(-6);
       } else {
-        // กรณี API ส่งข้อมูลกลับมาผิดพลาด
         throw new Error("Invalid data format received from API.");
       }
     } catch (err) {
       this.error = err.message || "An unknown error occurred.";
       console.error("Error fetching novels:", err);
     } finally {
-      // (เพิ่ม) เมื่อจบการทำงาน (ไม่ว่าจะสำเร็จหรือล้มเหลว) ให้ปิด loading
       this.isLoading = false;
     }
   }

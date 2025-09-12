@@ -1,12 +1,12 @@
 <template>
   <v-navigation-drawer
-    v-model="rightDrawer"
+    v-model="localRightDrawer"
     :right="right"
     temporary
     fixed
     width="300"
-    :color="isDark ? 'secondary' : 'surface'"
-    :dark="isDark"
+    :color="$vuetify.theme.dark ? 'secondary' : 'surface'"
+    :dark="$vuetify.theme.dark"
     class="nav-drawer right-drawer-border"
   >
     <v-list>
@@ -50,35 +50,24 @@ export default {
       default: false
     }
   },
-  // =================================================================
-  // ===== จุดที่แก้ไข: สร้าง isDark ขึ้นมาเก็บสถานะชั่วคราว =====
-  // =================================================================
   data() {
     return {
       right: true,
-      isDark: true // ตั้งค่าเริ่มต้นเป็น true (dark mode)
     }
   },
-  // =================================================================
-  // ===== จุดที่แก้ไข: เพิ่ม mounted และ watch =====
-  // =================================================================
-  watch: {
-    // คอยดูว่าค่า theme ใน vuetify เปลี่ยนแปลงหรือไม่
-    '$vuetify.theme.dark'(newVal) {
-      this.isDark = newVal;
-    }
-  },
-  mounted() {
-    // mounted จะทำงานเฉพาะในเบราว์เซอร์เท่านั้น
-    // เราจะอัปเดตค่า isDark ที่แท้จริงหลังจากที่หน้าเว็บโหลดในเบราว์เซอร์เสร็จแล้ว
-    if (process.client) {
-      this.isDark = this.$vuetify.theme.dark;
-    }
+  computed: {
+      localRightDrawer: {
+          get() {
+              return this.rightDrawer;
+          },
+          set(value) {
+              this.$emit('update:rightDrawer', value);
+          }
+      }
   },
   methods: {
     closeRightDrawer() {
-      // Use $emit to update the prop in the parent component
-      this.$emit('update:rightDrawer', false);
+      this.localRightDrawer = false;
     }
   }
 }
@@ -87,5 +76,8 @@ export default {
 <style scoped>
 .right-drawer-border {
   border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+.v-application--light .right-drawer-border {
+  border-left: 1px solid rgba(0, 0, 0, 0.12);
 }
 </style>

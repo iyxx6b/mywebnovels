@@ -39,7 +39,6 @@
       </v-col>
     </v-row>
 
-    <!-- Dialog Form -->
     <v-dialog v-model="dialog" max-width="600px">
       <v-card>
         <v-card-title>
@@ -50,8 +49,9 @@
             <v-text-field v-model="editedNovel.title" label="ชื่อนิยาย" required></v-text-field>
             <v-text-field v-model="editedNovel.author" label="ผู้เขียน" required></v-text-field>
             <v-text-field v-model="editedNovel.genre" label="ประเภท" required></v-text-field>
-            <v-select v-model="editedNovel.status" :items="['ongoing','completed']" label="สถานะ" required></v-select>
-            <v-file-input v-model="coverFile" label="ปกนิยาย" accept="image/*"></v-file-input>
+            <v-select v-model="editedNovel.status" :items="['ongoing','completed', 'paused']" label="สถานะ" required></v-select>
+            <v-textarea v-model="editedNovel.description" label="เรื่องย่อ"></v-textarea>
+            <v-file-input v-model="coverFile" label="ปกนิยาย" accept="image/*" show-size></v-file-input>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -65,29 +65,26 @@
 </template>
 
 <script>
-import axios from "axios"
-
 export default {
-  name: "NovelsPage",
+  name: "AdminNovelsPage",
   data() {
     return {
       dialog: false,
       valid: false,
       headers: [
-        { text: "ID", value: "id" },
+        { text: "ID", value: "id", width: '5%' },
+        { text: "ปก", value: "cover_image", sortable: false },
         { text: "ชื่อนิยาย", value: "title" },
         { text: "ผู้เขียน", value: "author" },
         { text: "ประเภท", value: "genre" },
         { text: "สถานะ", value: "status" },
-        { text: "ปก", value: "cover_image" },
-        { text: "จัดการ", value: "actions", sortable: false },
+        { text: "จัดการ", value: "actions", sortable: false, align: 'center' },
       ],
       novels: [],
       editedIndex: -1,
-      editedNovel: { id: 0, title: "", author: "", genre: "", status: "ongoing", cover_image: "" },
-      defaultNovel: { id: 0, title: "", author: "", genre: "", status: "ongoing", cover_image: "" },
+      editedNovel: { id: 0, title: "", author: "", genre: "", status: "ongoing", cover_image: "", description: "" },
+      defaultNovel: { id: 0, title: "", author: "", genre: "", status: "ongoing", cover_image: "", description: "" },
       coverFile: null,
-      apiBaseUrl: "http://localhost/db_webnovels/",
     }
   },
   computed: {
@@ -97,14 +94,12 @@ export default {
   },
   methods: {
     getCoverImage(cover) {
-      return cover && cover.startsWith("http")
-        ? cover
-        : "https://placehold.co/200x280?text=No+Image"
+      return cover || "https://placehold.co/200x280?text=No+Image"
     },
     async fetchNovels() {
       try {
-        const res = await axios.get(this.apiBaseUrl + "get_novels.php")
-        this.novels = res.data
+        const res = await this.$axios.get("/get_novels.php")
+        this.novels = Array.isArray(res.data) ? res.data : [];
       } catch (e) {
         console.error("Fetch failed:", e)
       }
@@ -130,38 +125,39 @@ export default {
     },
     async saveNovel() {
       const formData = new FormData()
+      // ส่งข้อมูลทั้งหมดใน editedNovel ไปกับ FormData
       for (const key in this.editedNovel) {
-        formData.append(key, this.editedNovel[key])
+        formData.append(key, this.editedNovel[key]);
       }
       if (this.coverFile) {
-        formData.append("cover", this.coverFile)
+        formData.append("cover", this.coverFile);
       }
 
       try {
         if (this.editedIndex > -1) {
-          await axios.post(this.apiBaseUrl + "update_novel.php", formData)
+          await this.$axios.post("/update_novel.php", formData);
         } else {
-          await axios.post(this.apiBaseUrl + "add_novel.php", formData)
+          await this.$axios.post("/add_novel.php", formData);
         }
-        await this.fetchNovels()
-        this.closeForm()
+        await this.fetchNovels();
+        this.closeForm();
       } catch (e) {
-        console.error("Save failed:", e)
+        console.error("Save failed:", e);
       }
     },
     async deleteNovel(id) {
       if (confirm("คุณต้องการลบข้อมูลนี้หรือไม่?")) {
         try {
-          await axios.get(this.apiBaseUrl + "delete_novel.php?id=" + id)
-          await this.fetchNovels()
+          await this.$axios.get(`/delete_novel.php?id=${id}`);
+          await this.fetchNovels();
         } catch (e) {
-          console.error("Delete failed:", e)
+          console.error("Delete failed:", e);
         }
       }
     },
   },
   mounted() {
-    this.fetchNovels()
+    this.fetchNovels();
   },
 }
 </script>

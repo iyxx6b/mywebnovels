@@ -8,12 +8,10 @@
       </v-card-title>
 
       <v-data-table :headers="headers" :items="novels" item-key="id" class="elevation-1">
-        <!-- ลำดับ -->
         <template v-slot:item.index="{ index }">
           {{ index + 1 }}
         </template>
 
-        <!-- ปกนิยาย -->
         <template v-slot:item.cover_image="{ item }">
           <v-img
             :src="item.cover_image || 'https://placehold.co/80x100?text=No+Image'"
@@ -23,7 +21,6 @@
           />
         </template>
 
-        <!-- ปุ่มจัดการ -->
         <template v-slot:item.actions="{ item }">
           <v-icon small class="mr-2" @click="openForm(item)">mdi-pencil</v-icon>
           <v-icon small @click="deleteNovel(item.id)">mdi-delete</v-icon>
@@ -31,7 +28,6 @@
       </v-data-table>
     </v-card>
 
-    <!-- Dialog ฟอร์ม -->
     <v-dialog v-model="dialog" max-width="600px">
       <v-card>
         <v-card-title>{{ formTitle }}</v-card-title>
@@ -44,7 +40,6 @@
             <v-textarea v-model="editedNovel.description" label="คำโปรย"></v-textarea>
             <v-textarea v-model="editedNovel.content" label="เนื้อหา"></v-textarea>
 
-            <!-- อัปโหลดรูป -->
             <v-file-input
               ref="fileInput"
               label="เลือกรูปปก"
@@ -64,8 +59,6 @@
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
   name: "AdminNovelsPage",
   data: () => ({
@@ -93,7 +86,6 @@ export default {
       content: "",
       cover_image: "",
     },
-    apiBase: "http://localhost/db_webnovels/",
   }),
 
   computed: {
@@ -105,7 +97,8 @@ export default {
   methods: {
     async fetchNovels() {
       try {
-        const res = await axios.get(this.apiBase + "get_novels.php");
+        // **จุดที่แก้ไข:** ลบ Base URL ออก
+        const res = await this.$axios.get("/get_novels.php");
         this.novels = res.data;
       } catch (err) {
         console.error("โหลดข้อมูลล้มเหลว:", err);
@@ -143,9 +136,11 @@ export default {
 
       try {
         if (this.editedIndex > -1) {
-          await axios.post(this.apiBase + "update_novel.php", formData);
+          // **จุดที่แก้ไข:** ลบ Base URL ออก
+          await this.$axios.post("/update_novel.php", formData);
         } else {
-          await axios.post(this.apiBase + "add_novel.php", formData);
+          // **จุดที่แก้ไข:** ลบ Base URL ออก
+          await this.$axios.post("/add_novel.php", formData);
         }
         await this.fetchNovels();
         this.closeForm();
@@ -157,7 +152,8 @@ export default {
     async deleteNovel(id) {
       if (confirm("ยืนยันการลบ?")) {
         try {
-          await axios.get(this.apiBase + "delete_novel.php?id=" + id);
+          // **จุดที่แก้ไข:** ลบ Base URL ออก
+          await this.$axios.get("/delete_novel.php?id=" + id);
           await this.fetchNovels();
         } catch (err) {
           console.error("Delete failed:", err);

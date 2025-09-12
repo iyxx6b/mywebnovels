@@ -29,7 +29,6 @@ export const mutations = {
       localStorage.removeItem('user');
     }
   },
-  // --- นี่คือ Mutation ที่เคยหายไป ---
   INITIALIZE_STORE(state) {
     if (process.client) {
       const token = localStorage.getItem('token');
@@ -45,6 +44,7 @@ export const mutations = {
 export const actions = {
   async login({ commit }, credentials) {
     try {
+      // **จุดที่แก้ไข:** เปลี่ยนมาใช้ Relative Path
       const response = await this.$axios.post('/login.php', credentials);
       if (response.data && response.data.token) {
         const { user, token } = response.data;
@@ -53,6 +53,7 @@ export const actions = {
       }
       return false;
     } catch (error) {
+      console.error('Login Action Error:', error);
       return false;
     }
   },
@@ -63,7 +64,6 @@ export const actions = {
 
 // GETTERS: ใช้สำหรับดึงข้อมูลจาก State ไปแสดงผล
 export const getters = {
-  // --- นี่คือ Getters ที่เคยหายไป ---
   isAuthenticated: state => state.isAuthenticated,
   loggedInUser: state => state.user,
   isAdmin: state => state.isAuthenticated && state.user && state.user.role === 'admin'
